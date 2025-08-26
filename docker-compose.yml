@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: adl-test
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+    ports:
+      - "5432:5432"
+    networks:
+      - django_network
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=dmj@django.cl
+      - PGADMIN_DEFAULT_PASSWORD=1234
+      - PGADMIN_CONFIG_PROXY_X_HOST_COUNT=1
+      - PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT=1
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - django_network
+
+volumes:
+  postgres_data:
+
+networks:
+  django_network:
+    driver: bridge
